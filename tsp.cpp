@@ -4,6 +4,7 @@ vector<int> bestPath;
 
 void TSP(int i, int num_vertex, vector<int>& X, vector<int>& visited, vector<vector<int>>& cost, int& dist, int& result)
 {
+    cout << "TSP called " << i << " time" << '\n';
     for (int j = 1; j <= num_vertex; j++)
         if (!visited[j]) // if vertex j is not visited yet
         {
@@ -30,20 +31,20 @@ void TSP(int i, int num_vertex, vector<int>& X, vector<int>& visited, vector<vec
         }
 }
 
-string Traveling(int Graph[][20], int num_vertex, char start)
+string Traveling(int Graph[20][20], int num_vertex, char start)
 {
     vector<vector<int>> cost(num_vertex+1, vector<int>(num_vertex+1));
     for (int i = 0; i < num_vertex; i++)
         for (int j = 0; j < num_vertex; j++)
             cost[i + 1][j + 1] = Graph[i][j];
-    for (int i = 1; i <= num_vertex; i++)
-    {
-        for (int j = 1; j <= num_vertex; j++)
-        {
-            cout << cost[i][j] << " ";
-        }
-        cout << "\n";
-    }
+    // for (int i = 1; i <= num_vertex; i++)
+    // {
+    //     for (int j = 1; j <= num_vertex; j++)
+    //     {
+    //         cout << cost[i][j] << " ";
+    //     }
+    //     cout << "\n";
+    // }
     int start_vertex = start - 'A' + 1;
     vector<int> visited(num_vertex+1, 0); // Reset visited array
     vector<int> X(num_vertex+1, 0);       // Reset X array
@@ -61,6 +62,6 @@ string Traveling(int Graph[][20], int num_vertex, char start)
     res += char(bestPath[1] + 'A' - 1);
     res += " ";
     res += to_string(result);
-    cout << res;
+    // cout << res;
     return res;
 }
