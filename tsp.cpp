@@ -2,66 +2,79 @@
 
 vector<int> bestPath;
 
-void TSP(int i, int num_vertex, vector<int>& X, vector<int>& visited, vector<vector<int>>& cost, int& dist, int& result)
+void TSP(int i, int num_vertex, vector<int> &status, vector<int> &visited, vector<vector<int>> &cost, int &dist, int &result, int min_cost)
 {
-    cout << "TSP called " << i << " time" << '\n';
     for (int j = 1; j <= num_vertex; j++)
-        if (!visited[j]) // if vertex j is not visited yet
+        if (!visited[j] && cost[status[i - 1]][j] != INT_MAX)
         {
             visited[j] = 1;
-            X[i] = j;
-            int temp_dist = dist + cost[X[i - 1]][X[i]];
-            if (temp_dist < result)
+            status[i] = j;
+            int temp_dist = dist;
+            if (cost[status[i - 1]][status[i]] != INT_MAX)
             {
-                if (i == num_vertex)
+                temp_dist += cost[status[i - 1]][status[i]];
+            }
+            if (i == num_vertex)
+            {
+                if (cost[status[num_vertex]][status[1]] != INT_MAX)
                 {
-                    // Update result:
-                    result = min(result, temp_dist + cost[X[num_vertex]][X[1]]);
-                    bestPath = X;
+                    temp_dist += cost[status[num_vertex]][status[1]];
                 }
-                else
+                if (temp_dist < result)
                 {
-                    dist = temp_dist;
-                    TSP(i + 1, num_vertex, X, visited, cost, dist, result);
-                    // dist -= cost[X[i - 1]][X[i]];
+                    result = temp_dist;
+                    bestPath = vector<int>(status.begin(), status.end());
                 }
             }
-            // Backtrack:
+            else if (temp_dist + (num_vertex - i + 1) * min_cost < result)
+            {
+                dist = temp_dist;
+                TSP(i + 1, num_vertex, status, visited, cost, dist, result, min_cost);
+                dist -= cost[status[i - 1]][status[i]];
+            }
             visited[j] = 0;
         }
 }
 
 string Traveling(int Graph[20][20], int num_vertex, char start)
 {
-    vector<vector<int>> cost(num_vertex+1, vector<int>(num_vertex+1));
+    vector<vector<int>> cost(num_vertex + 1, vector<int>(num_vertex + 1, INT_MAX));
+    for (int i = 0; i < num_vertex; i++)
+    {
+        for (int j = 0; j < num_vertex; j++)
+            cout << Graph[i][j] << " ";
+        cout << endl;
+    }
     for (int i = 0; i < num_vertex; i++)
         for (int j = 0; j < num_vertex; j++)
-            cost[i + 1][j + 1] = Graph[i][j];
-    // for (int i = 1; i <= num_vertex; i++)
-    // {
-    //     for (int j = 1; j <= num_vertex; j++)
-    //     {
-    //         cout << cost[i][j] << " ";
-    //     }
-    //     cout << "\n";
-    // }
+            if (Graph[i][j] != 0)
+                cost[i + 1][j + 1] = Graph[i][j];
     int start_vertex = start - 'A' + 1;
-    vector<int> visited(num_vertex+1, 0); // Reset visited array
-    vector<int> X(num_vertex+1, 0);       // Reset X array
+    vector<int> visited(num_vertex + 1, 0);
+    vector<int> X(num_vertex + 1, 0);
     int dist = 0;
     int result = INT_MAX;
     visited[start_vertex] = 1;
     X[1] = start_vertex;
-    TSP(2, num_vertex, X, visited, cost, dist, result);
-    string res = "";
+    int min_cost = INT_MAX;
     for (int i = 1; i <= num_vertex; i++)
+        for (int j = 1; j <= num_vertex; j++)
+            if (i != j && cost[i][j] < min_cost)
+                min_cost = cost[i][j];
+    TSP(2, num_vertex, X, visited, cost, dist, result, min_cost);
+    string res = "";
+    if (!bestPath.empty() && bestPath.size() >= num_vertex)
     {
-        res += char(bestPath[i] + 'A' - 1);
+        for (int i = 1; i <= num_vertex; i++)
+        {
+            res += char(bestPath[i] + 'A' - 1);
+            res += " ";
+        }
+        res += char(bestPath[1] + 'A' - 1);
         res += " ";
+        res += to_string(result);
     }
-    res += char(bestPath[1] + 'A' - 1);
-    res += " ";
-    res += to_string(result);
-    // cout << res;
+    else
+        res = "";
     return res;
 }
