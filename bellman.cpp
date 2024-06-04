@@ -1,45 +1,65 @@
 #include "bellman.h"
-
 void BF(int G[20][20], int num_vertex, char start, int value[], int prev[])
 {
-    int arr[20];
     int start_index = start - 'A';
     if (value[start_index] == -1)
+    {
         for (int i = 0; i < num_vertex; ++i)
         {
-            value[i] = INT_MAX;
+            value[i] = -1;
             prev[i] = -1;
-            arr[i] = INT_MAX;
         }
-    value[start_index] = 0;
-    arr[start_index] = 0;
+        value[start_index] = 0;
+    }
+    int arr[20];
     for (int i = 0; i < num_vertex; ++i)
         arr[i] = value[i];
     for (int i = 0; i < num_vertex; ++i)
     {
         for (int j = 0; j < num_vertex; ++j)
-            if (arr[j] != INT_MAX && arr[j] + G[j][i] < value[i])
+        {
+            if (arr[j] != -1 && G[j][i] != 0)
             {
-                value[i] = arr[j] + G[j][i];
-                prev[i] = j;
+                if (value[i] == -1 || arr[j] + G[j][i] < value[i])
+                {
+                    value[i] = arr[j] + G[j][i];
+                    prev[i] = j;
+                }
             }
+        }
     }
 }
 
-string BF_Path(int Graph[][20], int num_vertices, char start_vertex, char goal_vertex)
+string BF_Path(int Graph[20][20], int num_vertices, char start_vertex, char goal_vertex)
 {
     vector<int> value(num_vertices, INT_MAX);
     vector<int> prev(num_vertices, -1);
     value[start_vertex - 'A'] = 0;
-
-    for (int i = 1; i <= num_vertices - 1; i++)
-        for (int u = 0; u < num_vertices; u++)
-            for (int v = 0; v < num_vertices; v++)
-                if (Graph[u][v] != 0 && value[u] != INT_MAX && value[u] + Graph[u][v] < value[v])
+    int start_index = start_vertex - 'A';
+    if (value[start_index] == -1)
+    {
+        for (int i = 0; i < num_vertices; ++i)
+        {
+            value[i] = INT_MAX;
+            prev[i] = -1;
+        }
+        value[start_index] = 0;
+    }
+    for (int k = 0; k < num_vertices - 1; ++k)
+    {
+        vector<int> arr = value;
+        for (int i = 0; i < num_vertices; ++i)
+        {
+            for (int j = 0; j < num_vertices; ++j)
+            {
+                if (arr[j] != INT_MAX && Graph[j][i] != 0 && arr[j] + Graph[j][i] < value[i])
                 {
-                    value[v] = value[u] + Graph[u][v];
-                    prev[v] = u;
+                    value[i] = arr[j] + Graph[j][i];
+                    prev[i] = j;
                 }
+            }
+        }
+    }
     vector<char> path;
     int v = goal_vertex - 'A';
     for (; v != -1; v = prev[v])
