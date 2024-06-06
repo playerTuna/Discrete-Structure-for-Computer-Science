@@ -1,10 +1,8 @@
 #include <iostream>
 #include <climits>
 #include <vector>
-#include <string>
 #include <fstream>
-#include <algorithm>
-#include <cstring>
+#include <climits>
 using namespace std;
 
 #ifndef TSP_H
@@ -19,8 +17,7 @@ using namespace std;
  * Đầu ra:
  *    In ra đường đi ngắn nhất và độ dài của nó
  *************************************************************/
-void TSP(int i);
-string Traveling(int Graph [][20], int num_vertex, char start);
-
+void TSP(int i, int num_vertex, vector<int> &X, vector<int> &visited, vector<vector<int>> &cost, int &dist, int &result, int min_cost, int start_vertex);
+string Traveling(int Graph[20][20], int num_vertex, char start);
 
 #endif // TSP_H
