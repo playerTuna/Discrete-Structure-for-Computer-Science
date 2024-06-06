@@ -11,51 +11,51 @@ void BF(int G[20][20], int num_vertex, char start, int value[], int prev[])
         }
         value[start_index] = 0;
     }
-    int arr[20];
+    vector<int> prevStep(num_vertex);
     for (int i = 0; i < num_vertex; ++i)
-        arr[i] = value[i];
+        prevStep[i] = value[i];
     for (int i = 0; i < num_vertex; ++i)
     {
         for (int j = 0; j < num_vertex; ++j)
         {
-            if (arr[j] != -1 && G[j][i] != 0)
+            if (prevStep[i] != -1 && G[i][j] != 0)
             {
-                if (value[i] == -1 || arr[j] + G[j][i] < value[i])
+                if (value[j] == -1 || prevStep[i] + G[i][j] < value[j])
                 {
-                    value[i] = arr[j] + G[j][i];
-                    prev[i] = j;
+                    value[j] = prevStep[i] + G[i][j];
+                    prev[j] = i;
                 }
             }
         }
     }
 }
 
-string BF_Path(int Graph[20][20], int num_vertices, char start_vertex, char goal_vertex)
+string BF_Path(int Graph[20][20], int num_vertex, char start_vertex, char goal_vertex)
 {
-    vector<int> value(num_vertices, INT_MAX);
-    vector<int> prev(num_vertices, -1);
+    vector<int> value(num_vertex, INT_MAX);
+    vector<int> prev(num_vertex, -1);
     value[start_vertex - 'A'] = 0;
     int start_index = start_vertex - 'A';
     if (value[start_index] == -1)
     {
-        for (int i = 0; i < num_vertices; ++i)
+        for (int i = 0; i < num_vertex; ++i)
         {
             value[i] = INT_MAX;
             prev[i] = -1;
         }
         value[start_index] = 0;
     }
-    for (int k = 0; k < num_vertices - 1; ++k)
+    for (int k = 0; k < num_vertex - 1; ++k)
     {
-        vector<int> arr = value;
-        for (int i = 0; i < num_vertices; ++i)
+        vector<int> prevStep = value;
+        for (int i = 0; i < num_vertex; ++i)
         {
-            for (int j = 0; j < num_vertices; ++j)
+            for (int j = 0; j < num_vertex; ++j)
             {
-                if (arr[j] != INT_MAX && Graph[j][i] != 0 && arr[j] + Graph[j][i] < value[i])
+                if (prevStep[i] != INT_MAX && Graph[i][j] != 0 && prevStep[i] + Graph[i][j] < value[j])
                 {
-                    value[i] = arr[j] + Graph[j][i];
-                    prev[i] = j;
+                    value[j] = prevStep[i] + Graph[i][j];
+                    prev[j] = i;
                 }
             }
         }
